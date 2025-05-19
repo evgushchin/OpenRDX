@@ -1,4 +1,4 @@
-import {Component, Input, ViewEncapsulation} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {ReactiveFormsModule} from '@angular/forms';
 import {InputTextModule} from 'primeng/inputtext';
 import {DynInputComponent} from '../dyn-input.directive';
@@ -13,7 +13,7 @@ import {DynErrorComponent} from '../dyn-error/dyn-error.component';
     ReactiveFormsModule,
     InputTextModule,
     DynLabelComponent,
-    DynErrorComponent
+    DynErrorComponent,
   ],
   standalone: true,
 })

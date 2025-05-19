@@ -23,12 +23,12 @@ import {DynErrorComponent} from '../dyn-error/dyn-error.component';
   standalone: true,
 })
 export class DynInputDateComponent extends DynInputComponent {
-  @Input({ transform: booleanAttribute }) showClear: boolean = false;
-  @Input({ transform: booleanAttribute }) readonlyInput: boolean = false;
-  @Input({ transform: booleanAttribute }) timeOnly: boolean = false;
-  @Input({ transform: booleanAttribute }) showSeconds: boolean = false;
+  @Input({transform: booleanAttribute}) showClear: boolean = false;
+  @Input({transform: booleanAttribute}) readonlyInput: boolean = false;
+  @Input({transform: booleanAttribute}) timeOnly: boolean = false;
+  @Input({transform: booleanAttribute}) showSeconds: boolean = false;
   /** Whether to display timepicker. */
-  @Input({ transform: booleanAttribute }) showTime: boolean = false;
+  @Input({transform: booleanAttribute}) showTime: boolean = false;
   @Input() dateFormat: string | undefined = undefined;
   @Input() hourFormat: '24' | '12' = '24';
   @Input() selectionMode: 'range' | 'single' | 'multiple' = 'single';
@@ -40,6 +40,6 @@ export class DynInputDateComponent extends DynInputComponent {
   @Input() disabledDays: number[] = [];
   @Input() minDate: Date | undefined = undefined;
   @Input() maxDate: Date | undefined = undefined;
-  /** Type of view to display, valid values are "date" for datepicker and "month" for month picker.	*/
+  /** Type of view to display, valid values are "date" for datepicker and "month" for month picker.  */
   @Input() view: DatePickerTypeView = 'date';
 }

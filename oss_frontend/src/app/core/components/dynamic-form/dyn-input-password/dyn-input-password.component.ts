@@ -4,7 +4,6 @@ import {PasswordModule} from 'primeng/password';
 import {DynInputComponent} from '../dyn-input.directive';
 import {DynLabelComponent} from '../dyn-label/dyn-label.component';
 import {DynErrorComponent} from '../dyn-error/dyn-error.component';
-import {StringTemplateOutletDirective} from '../../../utils/string-template-outlet.directive';
 
 @Component({
   selector: 'dyn-input-password',
@@ -13,10 +12,9 @@ import {StringTemplateOutletDirective} from '../../../utils/string-template-outl
   encapsulation: ViewEncapsulation.None,
   imports: [
     ReactiveFormsModule,
-    StringTemplateOutletDirective,
     DynLabelComponent,
     PasswordModule,
-    DynErrorComponent
+    DynErrorComponent,
   ],
   standalone: true,
 })
