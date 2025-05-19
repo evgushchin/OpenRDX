@@ -1,0 +1,277 @@
+<p-toast/>
+@if (hasToolbar) {
+  <p-toolbar styleClass="mb-4 gap-2">
+    <ng-template pTemplate="start">
+      @if (hasBulkActions) {
+        <div class="flex flex-wrap items-center gap-2">
+          <div>Acci&oacute;n:</div>
+          <p-select
+            [virtualScroll]="true"
+            [virtualScrollOptions]="bulkActionsDropdownOptions"
+            [options]="bulkActions"
+            optionDisabled="disabled"
+            [(ngModel)]="selectedBulkAction"
+            [showClear]="true"
+            optionLabel="label"
+            optionValue="action"
+            styleClass="w-80"
+            placeholder="---------"/>
+          <p-button
+            severity="secondary"
+            label="Go"
+            [disabled]="selectedBulkAction === null"
+            (onClick)="bulkActionGo()">
+          </p-button>
+        </div>
+      }
+      <ng-container *stringTemplateOutlet="settings.toolbarLeftExtra">{{ settings.toolbarLeftExtra }}</ng-container>
+    </ng-template>
+    <ng-template pTemplate="end">
+      <ng-container *stringTemplateOutlet="settings.toolbarRightExtra">{{ settings.toolbarRightExtra }}</ng-container>
+
+      @if (hasCreateButton) {
+        <p-button
+          severity="success"
+          label="Agregar"
+          styleClass="flex flex-wrap flex-row items-center gap-1"
+          (onClick)="settings.createItem!()">
+          <i class="ri-add-line flex items-center text-lg"></i>
+        </p-button>
+      }
+    </ng-template>
+  </p-toolbar>
+}
+<p-table [columns]="columnService.visible()"
+         [rows]="itemsPerPage"
+         [reorderableColumns]="true"
+         [totalRecords]="totalRecords"
+         [value]="records"
+         [resizableColumns]="true"
+         [filterDelay]="0"
+         dataKey="id"
+         [scrollable]="true"
+         scrollHeight="flex"
+         sortMode="multiple"
+         [customSort]="true"
+         [paginator]="settings.paginator === undefined || settings.paginator"
+         [loading]="loading"
+         [lazy]="true"
+         (onLazyLoad)="loadData($event)"
+         (onEditInit)="onEditInit()"
+         (onEditComplete)="onEditComplete($event)"
+         (onEditCancel)="onEditCancel()"
+         [tableStyle]="{ 'min-width': '50rem' }"
+         styleClass="p-datatable-striped"
+         [class.hasEditInPlace]="isEditingInPlace"
+         [class.hasTemplateFilter]="hasTemplateFilters()">
+
+  @if (settings.toggleableColumnsCacheKey) {
+    <ng-template pTemplate="caption">
+      Elige las Columnas:
+      <p-multiSelect
+        display="chip"
+        [options]="columnService.toggleableColumns"
+        [(ngModel)]="columnService.selectedColumns"
+        optionLabel="header"
+        [style]="{'min-width': '200px'}"
+        placeholder="Elige las Columnas"/>
+    </ng-template>
+  }
+  <ng-template pTemplate="header"
+               let-columns>
+    <tr>
+      @if (hasSelectionHandler) {
+        <th style="width: 4rem">
+          <p-checkbox
+            [(ngModel)]="tableHeaderCheckboxState"
+            (onChange)="onTableHeaderCheckboxStateChanged($event)"
+            binary
+            indeterminate/>
+        </th>
+      }
+      @if (isExpandable) {
+        <th style="width: 5rem"></th>
+      }
+      @for (col of columns; track $index) {
+        <th pResizableColumn
+            [pResizableColumnDisabled]="!columnService.isResizable(col)"
+            pReorderableColumn
+            [pReorderableColumnDisabled]="!columnService.isReorderable(col)"
+            [pSortableColumn]="col.sortable ? columnService.getSortableField(col) : undefined"
+            [pSortableColumnDisabled]="!col.sortable"
+            [style.width]="col.width ?? 'auto'">
+          {{ col.header }}
+          @if (col.sortable) {
+            <p-sortIcon [field]="col.field"/>
+          }
+        </th>
+      }
+      @if (hasUpdateButton || hasDeleteButton || hasActionButtonsTemplate) {
+        <!-- Row actions -->
+        <th class="w-36"></th>
+      }
+    </tr>
+
+    @if (hasFilters()) {
+      <tr>
+        @if (hasSelectionHandler) {
+          <th style="width: 4rem"></th>
+        }
+        @if (isExpandable) {
+          <th style="width: 5rem"></th>
+        }
+        @for (col of columns; track $index) {
+          <th [class.overflow-visible]="hasColumnFilterTemplate(col.filterConfig)">
+            @if (col.filterConfig !== undefined) {
+              <p-columnFilter [field]="!isArray(col.field) ? col.field : col.field[0]"
+                              [type]="isString(col.filterConfig.template) ? col.filterConfig.template : 'text'"
+                              [matchMode]="col.filterConfig.matchMode ?? 'contains'"
+                              [showMenu]="col.filterConfig.showMenu ?? true"
+                              [showClearButton]="col.filterConfig.showClearButton ?? false"
+                              [matchModeOptions]="col.filterConfig.matchModeOptions ?? null">
+                @if (col.filterConfig.template !== undefined && !isString(col.filterConfig.template)) {
+                  <ng-template pTemplate="filter"
+                               let-filterValue
+                               let-filterCallback="filterCallback">
+                    <ng-container *ngTemplateOutlet="col.filterConfig.template;
+                            context: {
+                              $implicit: filterValue,
+                              filterCallback: filterCallback
+                            }"></ng-container>
+                  </ng-template>
+                }
+              </p-columnFilter>
+            }
+          </th>
+        }
+        @if (hasUpdateButton || hasDeleteButton || hasActionButtonsTemplate) {
+          <!-- Row actions -->
+          <th style="width: 9em"></th>
+        }
+      </tr>
+    }
+  </ng-template>
+
+  <ng-template pTemplate="body"
+               let-item
+               let-expanded="expanded"
+               let-rowIndex="rowIndex"
+               let-columns="columns">
+    <tr>
+      @if (hasSelectionHandler) {
+        <td>
+          <p-checkbox [binary]="true"
+                      (onChange)="onRowSelectionChange(item, $event.checked)"
+                      [ngModel]="isRowSelected(item)"/>
+        </td>
+      }
+      @if (isExpandable) {
+        <td>
+          <p-button type="button"
+                    pRipple
+                    [pRowToggler]="item"
+                    [text]="true"
+                    [rounded]="true"
+                    [plain]="true"
+                    [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"/>
+        </td>
+      }
+      @for (col of columns; track $index) {
+        @if (col.editTemplateRef && !isArray(col.field)) {
+          <td [pEditableColumn]="item[col.field]"
+              [pEditableColumnField]="col.field"
+              [pEditableColumnRowIndex]="rowIndex"
+              title="Haz clic para Editar"
+              class="cursor-pointer">
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <ng-container
+                  *ngTemplateOutlet="col.editTemplateRef; context: {$implicit: item[col.field], col: col, item: item}"></ng-container>
+              </ng-template>
+              <ng-template pTemplate="output">
+                <ng-container *ngTemplateOutlet="displayField; context: {col: col, item: item}"></ng-container>
+              </ng-template>
+            </p-cellEditor>
+          </td>
+        } @else {
+          <td>
+            <ng-container *ngTemplateOutlet="displayField; context: {col: col, item: item}"></ng-container>
+          </td>
+        }
+      }
+      <!-- Row actions -->
+      @if (hasUpdateButton || hasDeleteButton || hasActionButtonsTemplate) {
+        <td>
+          @if (settings.actionButtonsTemplateRef) {
+            <ng-container *ngTemplateOutlet="settings.actionButtonsTemplateRef; context: {$implicit: item}"></ng-container>
+          }
+          @if (hasUpdateButton) {
+            <p-button
+              (onClick)="settings.updateItem!(item)"
+              [rounded]="true"
+              [outlined]="true"
+              class="inline-block"
+              [class.mr-2]="hasDeleteButton"
+              styleClass="flex flex-wrap flex-row items-center gap-1"
+              severity="success">
+              <i class="ri-pencil-line flex items-center"
+                 style="font-size: 16px; stroke-width: 2;"></i></p-button>
+          }
+          @if (hasDeleteButton) {
+            <p-button
+              (onClick)="settings.deleteItem!(item)"
+              severity="danger"
+              class="inline-block"
+              styleClass="flex flex-wrap flex-row items-center gap-1"
+              [rounded]="true"
+              [outlined]="true">
+              <i class="ri-delete-bin-line flex items-center"
+                 style="font-size: 16px; stroke-width: 2;"></i>
+            </p-button>
+          }
+        </td>
+      }
+      <!-- end of row actions -->
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td [attr.colspan]="+isExpandable + +hasBulkActions + +(hasUpdateButton || hasDeleteButton) + settings.columns.length">
+        <div class="flex flex-col gap-2 items-center my-3">
+          <i class="pi pi-info-circle"
+             style="font-size: 2em; color: gray;"></i>
+          <p>No hay datos disponibles por el momento.</p>
+          <p-button
+            label="Refresh"
+            icon="pi pi-refresh"
+            (click)="loadData()"></p-button>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template #displayField
+               let-col="col"
+               let-item="item">
+    @if (col.templateRef) {
+      <ng-container
+        *ngTemplateOutlet="col.templateRef; context: isArray(col.field) ? getTemplateContext(col.field, item) : { $implicit: getItemAtPath(item, col.field) }"/>
+    } @else {
+      @if (!isArray(col.field)) {
+        {{ getItemAtPath(item, col.field) }}
+      } @else {
+        @for (field of col.field; track $index) {
+          {{ getItemAtPath(item, field) }}
+        }
+      }
+    }
+  </ng-template>
+
+  @if (isExpandable) {
+    <ng-template #expandedrow
+                 let-item>
+      <ng-container *ngTemplateOutlet="settings.expandableRowConfig!.templateRef; context: {$implicit: item, columns: +isExpandable + +hasBulkActions + +(hasUpdateButton || hasDeleteButton) + settings.columns.length}"></ng-container>
+    </ng-template>
+  }
+</p-table>

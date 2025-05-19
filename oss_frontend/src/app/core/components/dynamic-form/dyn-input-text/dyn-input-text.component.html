@@ -1,0 +1,13 @@
+<dyn-label [htmlFor]="controlName"
+           [label]="label"/>
+
+<input pInputText
+       type="text"
+       class="mt-1 block w-full p-2"
+       [autocomplete]="autocomplete"
+       [id]="controlName"
+       [formControl]="controller"
+       [attr.placeholder]="placeholder ?? null">
+
+<dyn-error [hasErrors]="hasErrors()"
+           [errorMessage]="getValidationErrorMessage()"/>

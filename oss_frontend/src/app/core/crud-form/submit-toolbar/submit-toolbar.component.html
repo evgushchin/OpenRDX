@@ -1,0 +1,25 @@
+<p-toolbar styleClass="mb-4 space-x-2">
+  <ng-template pTemplate="start">
+    <p-button label="GUARDAR"
+              type="submit"
+              severity="primary"
+              (onClick)="onSave.emit()"
+              styleClass="mr-2"/>
+
+    @if (showSaveAndAddAnother) {
+      <p-button label="Guardar y agregar otro"
+                type="submit"
+                (onClick)="onSaveAndAddAnother.emit()"
+                severity="secondary"/>
+    }
+  </ng-template>
+
+  <ng-template pTemplate="end">
+    @if (showDelete) {
+      <p-button label="Borrar"
+                severity="danger"
+                (onClick)="onDelete.emit()"
+                styleClass="font-medium"/>
+    }
+  </ng-template>
+</p-toolbar>

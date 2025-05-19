@@ -1,0 +1,12 @@
+<div class="flex items-center gap-2">
+  <p-checkbox
+    [formControl]="controller"
+    [binary]="true"
+    [inputId]="controlName + ''"/>
+
+  <dyn-label [htmlFor]="controlName"
+             [label]="label"/>
+</div>
+
+<dyn-error [hasErrors]="hasErrors()"
+           [errorMessage]="getValidationErrorMessage()"/>

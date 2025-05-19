@@ -1,0 +1,25 @@
+<dyn-label [htmlFor]="controlName"
+           [label]="label"/>
+
+<p-datepicker
+  [showClear]="showClear"
+  [timeOnly]="timeOnly"
+  [showTime]="showTime"
+  [showSeconds]="showSeconds"
+  [selectionMode]="selectionMode"
+  [maxDateCount]="maxDateCount"
+  [disabledDates]="disabledDates"
+  inputStyleClass="mt-1 block w-full p-2"
+  [dateFormat]="dateFormat"
+  [hourFormat]="hourFormat"
+  [minDate]="minDate"
+  [disabledDays]="disabledDays"
+  [maxDate]="maxDate"
+  [readonlyInput]="readonlyInput"
+  [view]="view"
+  [id]="controlName"
+  [formControl]="controller"
+  [placeholder]="placeholder ?? undefined"></p-datepicker>
+
+<dyn-error [hasErrors]="hasErrors()"
+           [errorMessage]="getValidationErrorMessage()"/>

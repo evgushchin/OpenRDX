@@ -1,0 +1,14 @@
+<dyn-label [htmlFor]="controlName"
+           [label]="label"/>
+<p-tree
+  [value]="options"
+  selectionMode="checkbox"
+  [loading]="loading"
+  [(selection)]="selectedNodes"
+  (selectionChange)="onSelectionChange($event)"
+  [propagateSelectionUp]="true"
+  [propagateSelectionDown]="true">
+</p-tree>
+
+<dyn-error [hasErrors]="hasErrors()"
+           [errorMessage]="getValidationErrorMessage()"/>

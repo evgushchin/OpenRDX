@@ -1,0 +1,47 @@
+@if (label) {
+  <dyn-label [htmlFor]="controlName"
+             [label]="label"/>
+}
+
+<p-autoComplete
+  autoOptionFocus
+  completeOnFocus
+  forceSelection
+  typeahead
+  multiple
+  unique
+  [autoHighlight]="false"
+  [(ngModel)]="selectedOption"
+  (ngModelChange)="onSelectedOptionChange()"
+  [disabled]="isDisabled"
+  [dropdown]="showDropdown"
+  dropdownMode="blank"
+  [placeholder]="placeholder"
+  [suggestions]="options"
+  [showClear]="showClear"
+  [readonly]="!showFilter"
+  [minLength]="0"
+  dataKey="id"
+  optionDisabled="disabled"
+  optionLabel="label"
+  styleClass="w-full"
+  class="block w-full sm:text-sm"
+  [class.mt-1]="label"
+  [class.chips-as-text]="!multiple"
+  (completeMethod)="onAutoComplete($event)"
+  (onFocus)="onFocus()"
+  (onDropdownClick)="onDropdownClick()">
+  <ng-template let-item
+               pTemplate="item">
+    @if (itemTemplate) {
+      <ng-container
+        *ngTemplateOutlet="itemTemplate; context: { $implicit: item }">
+      </ng-container>
+    } @else {
+      {{ item.label }}
+    }
+  </ng-template>
+</p-autoComplete>
+
+<dyn-error [hasErrors]="hasErrors()"
+           [errorMessage]="getValidationErrorMessage()"/>

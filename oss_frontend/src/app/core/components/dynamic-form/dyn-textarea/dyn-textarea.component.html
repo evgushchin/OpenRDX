@@ -1,0 +1,15 @@
+<dyn-label [htmlFor]="controlName"
+           [label]="label"/>
+
+<textarea
+  pTextarea
+  autoResize
+  class="mt-1 block w-full p-2"
+  [rows]="rows"
+  [cols]="cols"
+  [id]="controlName"
+  [formControl]="controller"
+  [attr.placeholder]="placeholder ?? null"></textarea>
+
+<dyn-error [hasErrors]="hasErrors()"
+           [errorMessage]="getValidationErrorMessage()"/>

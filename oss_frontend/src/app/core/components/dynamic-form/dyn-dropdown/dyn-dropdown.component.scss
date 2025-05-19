@@ -1,0 +1,17 @@
+.chips-as-text {
+  .p-autocomplete-token {
+    padding: 0;
+    background: 0;
+    border-radius: 0;
+  }
+
+  .p-autocomplete-token-icon {
+    display: none;
+  }
+
+  .p-autocomplete-multiple-container {
+    width: 100%;
+    gap: 0;
+    flex-wrap: initial;
+  }
+}
